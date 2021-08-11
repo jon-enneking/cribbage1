@@ -2,8 +2,8 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Cribbage {
-    ArrayList<Player> players;
-    Deck deck;
+    private ArrayList<Player> players;
+    private Deck deck;
 
     /* Initializes list of players and creates the deck that will be used. Sets dealer to first player entered. */
     public Cribbage(int number_of_players) throws Exception {
@@ -11,7 +11,7 @@ public class Cribbage {
         players = new ArrayList<Player>(number_of_players);
         String name;
         for(int i=0; i<number_of_players; i++) {
-            System.out.println("Enter player " + number_of_players + "\s name: ");
+            System.out.println("Enter player " + i+1 + "\s name: ");
             name = scanny.nextLine();
             players.add(new Player(name));
         }
@@ -66,13 +66,34 @@ public class Cribbage {
     Idea 3: If card i is 10, search for 5's or sums that add to 5. If i + (i+1) is < 15, try adding
     cards (i+2) and/or (i+3) (using mod 4). This seems like a stack problem. Double for-loop stack.
     How would we remove duplicates? */
-    /*public int getPoints(Player p) {
-        int fifteen = 0;
-        int run = 0;
 
-        for(Card card : p.getHand()) {
+    public int getPoints(Player p) {
+        int fifteens = 0, runs = 0, sum = 0;
+        ArrayList<Card> hand = p.getHand();
 
+        /* Find fifteens.. not sure how to remove duplicates yet. */
+        for(int i=0; i<hand.size()-1; i++) {
+            sum = hand.get(i).getValue();
+            int j = i+1;
+            while(j%hand.size() != i) {
+                int temp = sum;
+                System.out.println("Adding value at " + (j%(hand.size())));
+                sum += hand.get(j%(hand.size())).getValue();
+                if(sum > 15) 
+                    sum = temp;
+                else if(sum == 15) {
+                    fifteens++;
+                    sum = temp;
+                }
+                j++;
+            }
         }
-    }*/
+
+        return fifteens;
+    }
+
+    /* Methods for testing purposes */
+    public Deck getDeck() {return deck;}
+    public ArrayList<Player> getPlayers() {return players;}
     
 }

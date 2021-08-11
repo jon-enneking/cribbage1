@@ -32,6 +32,16 @@ public class Card {
         return suit;
     }
 
+    public int getValue() {
+        int val = getRank();
+
+        /* The value of Jacks, Queens, and Kings is 10 */
+        if(rank > 10)
+            val = 10;
+        
+        return val;
+    }
+
     public static int stringtoRank(String s) {
         if(s.equalsIgnoreCase("a"))
             return 1;
