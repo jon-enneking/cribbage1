@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Cribbage {
     private ArrayList<Player> players;
@@ -90,6 +91,39 @@ public class Cribbage {
         }
 
         return fifteens;
+    }
+
+    /* Search the list for the key. If the sum after adding one of the cards is less than 15,
+    do a recursive call. */
+    //String result is an attempt to print how the fifteens are created.
+    public int fifteens(int key, ArrayList<Card> cards) {
+        int total = 0;
+        int cur = 0;
+        String result = "";
+        for(int i=0; i<cards.size(); i++) {
+            //result = "" + (15-key);
+            cur = cards.get(i).getValue(); //The current card we are working with.
+
+            // If there is a card that results in a fifteen, increase total.
+            if(cur == key) {
+                total++;
+                //result += " + " + (15-key) + " = " + 15;
+                //System.out.print(result);
+            }
+
+            /* If there is a card that results in a sum less than fifteen, call the function 
+            again with the remaining cards looking for the new key that will create a fiteen. */ 
+            else if(cur < key) {
+                List<Card> sub = cards.subList(i+1, cards.size());
+                ArrayList<Card> sub_list = new ArrayList<Card>(sub);
+                result += "" + (15-key);
+                total += fifteens(key - cur, sub_list);
+            }
+
+            //System.out.println(result);
+        }
+
+        return total;
     }
 
     /* Methods for testing purposes */
