@@ -24,10 +24,17 @@ public class test {
         
         //int points = game.fifteens(15, one.getHand());
         int fifteens = game.fifteens(15, test_hand);
-        int runs = game.runs(10, 8, test_hand, false);
+        //int runs = game.runs(10, 8, test_hand, false);
+        ArrayList<Integer> test_ranks = one.cardsToRanks(test_hand);
+        int start = 5;
+        boolean up = false;
+        int distance_up = one.lengthOfRun(start, up, test_ranks);
+
+
 
         System.out.println("\nThere are " + fifteens + " fifteens");
-        System.out.println("\nThere are " + runs + " points from runs");
+        System.out.println("Consecutive cards from " + start + " going " + up + " is " + distance_up);
+        //System.out.println("\nThere are " + runs + " points from runs");
 
         
 
