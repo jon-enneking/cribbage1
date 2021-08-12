@@ -95,36 +95,62 @@ public class Cribbage {
 
     /* Search the list for the key. If the sum after adding one of the cards is less than 15,
     do a recursive call. */
-    //String result is an attempt to print how the fifteens are created.
     public int fifteens(int key, ArrayList<Card> cards) {
         int total = 0;
         int cur = 0;
-        String result = "";
+
         for(int i=0; i<cards.size(); i++) {
-            //result = "" + (15-key);
             cur = cards.get(i).getValue(); //The current card we are working with.
 
             // If there is a card that results in a fifteen, increase total.
-            if(cur == key) {
+            if(cur == key)
                 total++;
-                //result += " + " + (15-key) + " = " + 15;
-                //System.out.print(result);
-            }
 
             /* If there is a card that results in a sum less than fifteen, call the function 
             again with the remaining cards looking for the new key that will create a fiteen. */ 
             else if(cur < key) {
                 List<Card> sub = cards.subList(i+1, cards.size());
                 ArrayList<Card> sub_list = new ArrayList<Card>(sub);
-                result += "" + (15-key);
                 total += fifteens(key - cur, sub_list);
             }
+        }
+        return total;
+    }
 
-            //System.out.println(result);
+    /* The first call of this function will pass in the rank of the first card in the list +1
+    into the above_rank parameter. 
+    Input of -1 determines direction. 
+    Will always find longest series above input before looking at series below. */
+    public int runs (int above_rank, int below_rank, ArrayList<Card> cards, boolean con) {
+        boolean has_above = true;
+        boolean has_below = true;
+        int total = 0, cur;
+        Card removed;
+        if(above_rank == 14 || above_rank == -1) //if current card is a king or not searching above.
+            has_above = false;
+        else if(below_rank == 1 || below_rank == -1 ) //if current card is an ace or not searching below.
+            has_below = false;
+
+        for(int i=0; i<cards.size(); i++) {
+            cur = cards.get(i).getRank(); //The current card we are working with.
+            if(has_above && cur == above_rank) {
+                if(con) total++;
+                /* Search remaining cards to see if there is a next consecutive */
+                removed = cards.remove(i);
+                total += runs(above_rank + 1, -1, cards, true); 
+            }
+            else if(((cards.size() == 5) || (above_rank == -1)) && (has_below && cur == below_rank)) {
+                if(con) total++;
+                /* Search remaining cards to see if there is a next consecutive */
+                removed = cards.remove(i);
+                total += runs(-1, below_rank-1, cards, true); 
+                cards.add(removed);
+            }
+            else con=false;
         }
 
         return total;
-    }
+   }
 
     /* Methods for testing purposes */
     public Deck getDeck() {return deck;}
