@@ -120,6 +120,12 @@ public class Cribbage {
     /* Inputs are the rank of the card we are starting with, the rank we are looking for, and
     the list that we are looking through.
     Will always find longest series above input before looking at series below. */
+<<<<<<< HEAD
+=======
+
+    /* New idea: search down for as long as posible, then search up, removing all cards
+    as we go. Repeat with remaining cards. Distance function. */
+>>>>>>> 431c3e78680ff7ac99479d47eca6b623196f66b0
     public int runs (int start, int key, ArrayList<Card> cards) {
         int total = 0, cur, temp=-1;
         Card removed;
