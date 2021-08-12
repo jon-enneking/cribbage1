@@ -24,7 +24,7 @@ public class test {
         
         //int points = game.fifteens(15, one.getHand());
         int fifteens = game.fifteens(15, test_hand);
-        int runs = game.runs(10, 8, test_hand, false);
+        int runs = game.runs(9, 10, test_hand);
 
         System.out.println("\nThere are " + fifteens + " fifteens");
         System.out.println("\nThere are " + runs + " points from runs");
