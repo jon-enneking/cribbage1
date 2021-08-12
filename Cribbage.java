@@ -117,36 +117,37 @@ public class Cribbage {
         return total;
     }
 
-    /* The first call of this function will pass in the rank of the first card in the list +1
-    into the above_rank parameter. 
-    Input of -1 determines direction. 
+    /* Inputs are the rank of the card we are starting with, the rank we are looking for, and
+    the list that we are looking through.
     Will always find longest series above input before looking at series below. */
-    public int runs (int above_rank, int below_rank, ArrayList<Card> cards, boolean con) {
-        boolean has_above = true;
-        boolean has_below = true;
-        int total = 0, cur;
+
+    /* New idea: search down for as long as posible, then search up, removing all cards
+    as we go. Repeat with remaining cards. Distance function. */
+    public int runs (int start, int key, ArrayList<Card> cards) {
+        int total = 0, cur, temp=-1;
         Card removed;
-        if(above_rank == 14 || above_rank == -1) //if current card is a king or not searching above.
-            has_above = false;
-        else if(below_rank == 1 || below_rank == -1 ) //if current card is an ace or not searching below.
-            has_below = false;
 
         for(int i=0; i<cards.size(); i++) {
             cur = cards.get(i).getRank(); //The current card we are working with.
-            if(has_above && cur == above_rank) {
-                if(con) total++;
-                /* Search remaining cards to see if there is a next consecutive */
+            /*if(total == temp) {
+                start = cur;
+                key = cur+1;
+            }*/
+            temp = total;
+            if(cur == key) {
+                /* Remove current card, then search remaining to see if there is a consecutive */
                 removed = cards.remove(i);
-                total += runs(above_rank + 1, -1, cards, true); 
+                if(key > start) total += runs(start, key+1, cards);
+                else total += runs(start, key-1, cards);
+
+                cards.add(i, removed);
+                if(total == temp) continue; //No consecutive value was found for current i.
             }
-            else if(((cards.size() == 5) || (above_rank == -1)) && (has_below && cur == below_rank)) {
-                if(con) total++;
-                /* Search remaining cards to see if there is a next consecutive */
-                removed = cards.remove(i);
-                total += runs(-1, below_rank-1, cards, true); 
-                cards.add(removed);
+            else {
+                if((key - start) > 2){
+                    total += (key-start);
+                }
             }
-            else con=false;
         }
 
         return total;
@@ -155,5 +156,4 @@ public class Cribbage {
     /* Methods for testing purposes */
     public Deck getDeck() {return deck;}
     public ArrayList<Player> getPlayers() {return players;}
-    
-}
+    }
