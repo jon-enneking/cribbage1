@@ -68,7 +68,7 @@ public class Cribbage {
     cards (i+2) and/or (i+3) (using mod 4). This seems like a stack problem. Double for-loop stack.
     How would we remove duplicates? */
 
-    public int getPoints(Player p) {
+    public static int getPoints(Player p) {
         int fifteens = 0, runs = 0, sum = 0;
         ArrayList<Card> hand = p.getHand();
 
@@ -95,7 +95,7 @@ public class Cribbage {
 
     /* Search the list for the key. If the sum after adding one of the cards is less than 15,
     do a recursive call. */
-    public int fifteens(int key, ArrayList<Card> cards) {
+    public static int fifteens(int key, ArrayList<Card> cards) {
         int total = 0;
         int cur = 0;
 
@@ -120,13 +120,7 @@ public class Cribbage {
     /* Inputs are the rank of the card we are starting with, the rank we are looking for, and
     the list that we are looking through.
     Will always find longest series above input before looking at series below. */
-<<<<<<< HEAD
-=======
-
-    /* New idea: search down for as long as posible, then search up, removing all cards
-    as we go. Repeat with remaining cards. Distance function. */
->>>>>>> 431c3e78680ff7ac99479d47eca6b623196f66b0
-    public int runs (int start, int key, ArrayList<Card> cards) {
+    public static int runs (int start, int key, ArrayList<Card> cards) {
         int total = 0, cur, temp=-1;
         Card removed;
 

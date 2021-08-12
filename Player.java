@@ -11,7 +11,7 @@ public class Player {
         this.hand = new ArrayList<Card>();
     }
 
-    public ArrayList<Integer> cardsToRanks(ArrayList<Card> cards){
+    public static ArrayList<Integer> cardsToRanks(ArrayList<Card> cards){
         ArrayList<Integer> rank_hand = new ArrayList<Integer>(cards.size());
         for(Card card : cards) {
             rank_hand.add(card.getRank());
@@ -74,7 +74,7 @@ public class Player {
 
     /* Determines the length of a run given the rank of the starting card,
     the direction, and the ArrayList of ranks */
-    public int lengthOfRun(int start, boolean up, ArrayList<Integer> ranks) {
+    public static int lengthOfRun(int start, boolean up, ArrayList<Integer> ranks) {
         int total_distance = 1;
         int next;
         if(up) next = 1;
