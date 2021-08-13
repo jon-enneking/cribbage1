@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Player {
     private ArrayList<Card> hand;
@@ -89,5 +91,60 @@ public class Player {
         }
 
         return total_distance;
+    }
+
+    public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
+        Set<Card> set = new HashSet<Card>();
+        int rank = card.getRank();
+        int distance_down = 1;
+        int distance_up = 1;
+        set.add(card);
+        list.remove(card);
+        Card cur;
+        for(int i=0; i<list.size(); i++) {
+            cur = list.get(i);
+            /*if(cur.getRank() == rank) {
+                set.addAll(findConsecutiveCards(cur, list));
+            }*/
+            if(cur.getRank() == rank-distance_down) {
+                set.add(cur);
+                distance_down++;
+                if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
+            }
+            else if(cur.getRank() == rank+distance_up) {
+                set.add(cur);
+                distance_up++;
+                if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
+            }        
+        }
+
+        if(set.size() < 3)
+            System.out.println("Set of consecutive cards is too small to be considered a run");
+        else
+            System.out.println("Run found: ");
+        set.forEach(System.out::println);
+        return set;
+    }
+    public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
+        Set<Set<Card>> runs = new HashSet<Set<Card>>();
+        Set<Card> temp;
+        Card cur;
+        ArrayList<Card> copy = (ArrayList<Card>) cards.clone();
+
+        /* Pick a card. Search for consecutive cards around it and add them
+        to a set. Once all of the consecutive cards have been found, do the
+        same thing with the remaining cards in the list.
+        If there is a duplicate of the card, run the same search twice. */
+        while(cards.size() > 0) {
+            cur = cards.get(0);
+            temp = findConsecutiveCards(cur, cards);
+            if(temp.size() > 2)
+                runs.add(temp);
+        }
+
+        System.out.println("\nAll of the sets are: ");
+        runs.forEach(System.out::println);
+        cards.addAll(copy); //Puts all of the cards back into the hand
+        return runs;
     }
 }
