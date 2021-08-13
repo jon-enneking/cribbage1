@@ -15,17 +15,16 @@ public class test {
         Player one = players.get(0);
         
         //int points = game.getPoints(one);
-        ArrayList<Card> test_hand = new ArrayList<Card>();
-        test_hand.add(new Card(9, SUIT.HEART));
-        test_hand.add(new Card(4, SUIT.SPADE));
-        test_hand.add(new Card(8, SUIT.HEART));
-        test_hand.add(new Card(3, SUIT.HEART));
+        ArrayList<Card> test_hand = new ArrayList<Card>();;
+        test_hand.add(new Card(3, SUIT.DIAMOND));
         test_hand.add(new Card(5, SUIT.HEART));
+        test_hand.add(new Card(3, SUIT.HEART));
+        test_hand.add(new Card(4, SUIT.DIAMOND));
         test_hand.add(new Card(4, SUIT.HEART));
         
-        int fifteens = Cribbage.fifteens(15, one.getHand());
-        Player.getRuns(one.getHand());
-        one.displayHand();
+        int fifteens = Cribbage.fifteens(15, test_hand);
+        Player.getRuns(test_hand);
+        //one.displayHand();
 
 
 

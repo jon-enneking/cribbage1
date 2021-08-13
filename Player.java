@@ -66,19 +66,22 @@ public class Player {
         return c;
     }
 
+    /*  Problem: Card is removed that may be in other future runs 
+        (Ex: 3,3,4,4,5 -> the first 3 is used in two different runs).
+        Easy fix: don't remove cards from hand. Use ifContainsAll method for sets to make 
+        sure that no duplicates are added. */
+
     public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
-        int distance_down = 1;
-        int distance_up = 1;
+        Card cur;
+        int distance_down = 1, distance_up = 1, repeat = 0;
         set.add(card);
         list.remove(card);
-        Card cur;
+        
         for(int i=0; i<list.size(); i++) {
             cur = list.get(i);
-            /*if(cur.getRank() == rank) {
-                set.addAll(findConsecutiveCards(cur, list));
-            }*/
+
             if(cur.getRank() == rank-distance_down) {
                 set.add(cur);
                 distance_down++;
