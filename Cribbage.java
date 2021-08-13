@@ -117,39 +117,6 @@ public class Cribbage {
         return total;
     }
 
-    /* Inputs are the rank of the card we are starting with, the rank we are looking for, and
-    the list that we are looking through.
-    Will always find longest series above input before looking at series below. */
-    public static int runs (int start, int key, ArrayList<Card> cards) {
-        int total = 0, cur, temp=-1;
-        Card removed;
-
-        for(int i=0; i<cards.size(); i++) {
-            cur = cards.get(i).getRank(); //The current card we are working with.
-            /*if(total == temp) {
-                start = cur;
-                key = cur+1;
-            }*/
-            temp = total;
-            if(cur == key) {
-                /* Remove current card, then search remaining to see if there is a consecutive */
-                removed = cards.remove(i);
-                if(key > start) total += runs(start, key+1, cards);
-                else total += runs(start, key-1, cards);
-
-                cards.add(i, removed);
-                if(total == temp) continue; //No consecutive value was found for current i.
-            }
-            else {
-                if((key - start) > 2){
-                    total += (key-start);
-                }
-            }
-        }
-
-        return total;
-   }
-
     /* Methods for testing purposes */
     public Deck getDeck() {return deck;}
     public ArrayList<Player> getPlayers() {return players;}

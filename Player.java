@@ -12,14 +12,6 @@ public class Player {
         this.name = name;
         this.hand = new ArrayList<Card>();
     }
-
-    public static ArrayList<Integer> cardsToRanks(ArrayList<Card> cards){
-        ArrayList<Integer> rank_hand = new ArrayList<Integer>(cards.size());
-        for(Card card : cards) {
-            rank_hand.add(card.getRank());
-        }
-        return rank_hand;
-    }
     
     public void displayHand() {
         System.out.println(name + "\'s hand is:");
@@ -74,25 +66,6 @@ public class Player {
         return c;
     }
 
-    /* Determines the length of a run given the rank of the starting card,
-    the direction, and the ArrayList of ranks */
-    public static int lengthOfRun(int start, boolean up, ArrayList<Integer> ranks) {
-        int total_distance = 1;
-        int next;
-        if(up) next = 1;
-        else next = -1;
-
-        int index = ranks.indexOf(start+next);
-        if(index != -1) {
-            total_distance++;
-            int removed = ranks.remove(index);
-            total_distance += lengthOfRun(removed, up, ranks);
-            ranks.add(index, removed);
-        }
-
-        return total_distance;
-    }
-
     public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
@@ -125,6 +98,7 @@ public class Player {
         set.forEach(System.out::println);
         return set;
     }
+
     public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
         Set<Set<Card>> runs = new HashSet<Set<Card>>();
         Set<Card> temp;
