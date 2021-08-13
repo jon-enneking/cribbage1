@@ -69,27 +69,32 @@ public class Player {
     /*  Problem: Card is removed that may be in other future runs 
         (Ex: 3,3,4,4,5 -> the first 3 is used in two different runs).
         Easy fix: don't remove cards from hand. Use ifContainsAll method for sets to make 
-        sure that no duplicates are added. */
+        sure that no duplicates are added. 
+        Other fix: Only occassion of this is when there are two pairs (4 points of pairs),
+        and a run. Could make a condition to check this. */
 
     public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
         Card cur;
-        int distance_down = 1, distance_up = 1, repeat = 0;
+        int distance_down = 1, distance_up = 1, repeat_index = 0;
         set.add(card);
-        list.remove(card);
         
-        for(int i=0; i<list.size(); i++) {
+        
+        for(int i=1; i<list.size(); i++) {
             cur = list.get(i);
 
             if(cur.getRank() == rank-distance_down) {
                 set.add(cur);
                 distance_down++;
-                if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
+                if(list.lastIndexOf(cur) != i && distance_down == 1) repeat_index=i+1; //There is a duplicate
+                if(i > 0) 
+                    i=-1; //Accounts for skipped cards that could be in run.
             }
             else if(cur.getRank() == rank+distance_up) {
                 set.add(cur);
                 distance_up++;
+                if(list.lastIndexOf(cur) != i && distance_up == 1) repeat_index=i+1;
                 if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
             }        
         }
@@ -99,6 +104,10 @@ public class Player {
         else
             System.out.println("Run found: ");
         set.forEach(System.out::println);
+
+        list.remove(card);
+        if(repeat_index != 0) list.add(repeat_index, card);
+
         return set;
     }
 
