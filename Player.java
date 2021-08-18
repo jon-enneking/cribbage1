@@ -73,7 +73,8 @@ public class Player {
         Other fix: Only occassion of this is when there are two pairs (4 points of pairs),
         and a run. Could make a condition to check this. */
 
-    public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
+    //UNUSED
+        public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
         Card cur;
@@ -110,28 +111,55 @@ public class Player {
         return set;
     }
 
-    //Only send lists of cards with no duplicates to findConsecutiveCards
-    public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
-        Set<Set<Card>> runs = new HashSet<Set<Card>>();
-        Set<Card> temp;
-        Card cur, last_card = cards.get(cards.size()-1);
-        ArrayList<Card> copy = (ArrayList<Card>) cards.clone();
-
-        /* Pick a card. Search for consecutive cards around it and add them
-        to a set. Once all of the consecutive cards have been found, do the
-        same thing with the remaining cards in the list.*/
-        while(cards.get(0) != last_card) {
-            cur = cards.get(0);
-            temp = findConsecutiveCards(cur, cards);
-
-            /* Sets cannot have duplicates, so it will skip duplicate entries */
-            if(temp.size() > 2)
-                runs.add(temp);
+    public static Set<Card> findRun(ArrayList<Card> cards) {
+        int rank, distance_up=1, distance_down=1;
+        Set<Card> set = new HashSet<Card>();
+        Card key_card, temp;
+        for(int i=0; i<cards.size(); i++){
+            key_card = cards.get(i);
+            rank = key_card.getRank();
+            set.add(key_card);
+            for(int j = (i+1)%cards.size(); j!= i; j=(j+1)%cards.size()) {
+                temp = cards.get(j);
+                if (temp.getRank() == rank + distance_up) {
+                    set.add(temp);
+                    distance_up++;
+                    if(j>(i+1)%cards.size()) j = i%cards.size();
+                }
+                else if(temp.getRank() == rank - distance_down) {
+                    set.add(temp);
+                    distance_down++;
+                    if(j>(i+1)%cards.size()) j = i%cards.size();
+                }
+            }
+            if(set.size() > 2) {
+                /* Run Found */
+                set.forEach(System.out::println);
+                break;
+            }
+            else    
+                set.clear();
         }
 
+        return set;
+    }
+    
+    public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
+        ArrayList<ArrayList<Card>> uniqueLists = allUniqueLists(cards);
+        Set<Set<Card>> runs = new HashSet<Set<Card>>();
+        Set<Card> temp;
+        int total_points = 0;
+        for(ArrayList<Card> list : uniqueLists) {
+            temp = findRun(list);
+            if(temp.size()>0) {
+                runs.add(temp);
+                total_points+=temp.size();
+            }
+        }
+        
         System.out.println("\nAll of the sets are: ");
-        runs.forEach(System.out::println);
-        cards.addAll(copy); //Puts all of the cards back into the hand
+        runs.forEach(run-> System.out.println(run));
+        System.out.println("Total points from runs = " + total_points);
         return runs;
     }
 
