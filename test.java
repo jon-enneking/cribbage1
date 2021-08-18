@@ -21,10 +21,13 @@ public class test {
         test_hand.add(new Card(3, SUIT.HEART));
         test_hand.add(new Card(4, SUIT.DIAMOND));
         test_hand.add(new Card(4, SUIT.HEART));
+        test_hand.add(new Card(7, SUIT.CLUB));
         
         int fifteens = Cribbage.fifteens(15, test_hand);
-        Player.getRuns(test_hand);
+        //Player.getRuns(test_hand);
         //one.displayHand();
+        ArrayList<ArrayList<Card>> lists = Player.allUniqueLists(test_hand);
+        lists.forEach(System.out::println);
 
 
 
