@@ -69,23 +69,27 @@ public class Player {
     /*  Problem: Card is removed that may be in other future runs 
         (Ex: 3,3,4,4,5 -> the first 3 is used in two different runs).
         Easy fix: don't remove cards from hand. Use ifContainsAll method for sets to make 
-        sure that no duplicates are added. */
+        sure that no duplicates are added. 
+        Other fix: Only occassion of this is when there are two pairs (4 points of pairs),
+        and a run. Could make a condition to check this. */
 
-    public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
+    //UNUSED
+        public static Set<Card> findConsecutiveCards(Card card, ArrayList<Card> list) {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
         Card cur;
-        int distance_down = 1, distance_up = 1, repeat = 0;
+        int distance_down = 1, distance_up = 1;
         set.add(card);
-        list.remove(card);
         
-        for(int i=0; i<list.size(); i++) {
+        
+        for(int i=1; i<list.size(); i++) {
             cur = list.get(i);
 
             if(cur.getRank() == rank-distance_down) {
                 set.add(cur);
                 distance_down++;
-                if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
+                if(i > 0) 
+                    i=-1; //Accounts for skipped cards that could be in run.
             }
             else if(cur.getRank() == rank+distance_up) {
                 set.add(cur);
@@ -99,29 +103,109 @@ public class Player {
         else
             System.out.println("Run found: ");
         set.forEach(System.out::println);
+
+        /* Remove card from the front and add it to the end */
+        list.remove(card);
+        list.add(card); 
+
         return set;
     }
 
-    public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
-        Set<Set<Card>> runs = new HashSet<Set<Card>>();
-        Set<Card> temp;
-        Card cur;
-        ArrayList<Card> copy = (ArrayList<Card>) cards.clone();
-
-        /* Pick a card. Search for consecutive cards around it and add them
-        to a set. Once all of the consecutive cards have been found, do the
-        same thing with the remaining cards in the list.
-        If there is a duplicate of the card, run the same search twice. */
-        while(cards.size() > 0) {
-            cur = cards.get(0);
-            temp = findConsecutiveCards(cur, cards);
-            if(temp.size() > 2)
-                runs.add(temp);
+    public static Set<Card> findRun(ArrayList<Card> cards) {
+        int rank, distance_up=1, distance_down=1;
+        Set<Card> set = new HashSet<Card>();
+        Card key_card, temp;
+        for(int i=0; i<cards.size(); i++){
+            key_card = cards.get(i);
+            rank = key_card.getRank();
+            set.add(key_card);
+            for(int j = (i+1)%cards.size(); j!= i; j=(j+1)%cards.size()) {
+                temp = cards.get(j);
+                if (temp.getRank() == rank + distance_up) {
+                    set.add(temp);
+                    distance_up++;
+                    if(j>(i+1)%cards.size()) j = i%cards.size();
+                }
+                else if(temp.getRank() == rank - distance_down) {
+                    set.add(temp);
+                    distance_down++;
+                    if(j>(i+1)%cards.size()) j = i%cards.size();
+                }
+            }
+            if(set.size() > 2) {
+                /* Run Found */
+                set.forEach(System.out::println);
+                break;
+            }
+            else    
+                set.clear();
         }
 
+        return set;
+    }
+    
+    public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
+        ArrayList<ArrayList<Card>> uniqueLists = allUniqueLists(cards);
+        Set<Set<Card>> runs = new HashSet<Set<Card>>();
+        Set<Card> temp;
+        int total_points = 0;
+        for(ArrayList<Card> list : uniqueLists) {
+            temp = findRun(list);
+            if(temp.size()>0) {
+                runs.add(temp);
+                total_points+=temp.size();
+            }
+        }
+        
         System.out.println("\nAll of the sets are: ");
-        runs.forEach(System.out::println);
-        cards.addAll(copy); //Puts all of the cards back into the hand
+        runs.forEach(run-> System.out.println(run));
+        System.out.println("Total points from runs = " + total_points);
         return runs;
     }
+
+    public static ArrayList<ArrayList<Card>> allUniqueLists(ArrayList<Card> cards) {
+        ArrayList<ArrayList<Card>> allSets = new ArrayList<ArrayList<Card>>();
+        Card temp1, temp2;
+        int finish_index = cards.size();
+        for(int i=0; i<finish_index; i++) {
+            temp1 = cards.get(i);
+            for(int j=i+1; j<cards.size(); j++) {
+                temp2 = cards.get(j);
+                if(temp1.getRank() == temp2.getRank()) { //Then there is a duplicate
+                    /* Remove first instance of duplicate and send remaining cards to look for duplicates */
+                    cards.remove(temp1);
+                    allSets.addAll(allUniqueLists(cards));
+
+                    /* Add first instance of duplicate back in, remove the second instance,
+                    and look for duplicates in the remaining cards */
+                    cards.add(i,temp1);
+                    cards.remove(temp2);
+                    allSets.addAll(allUniqueLists(cards));
+
+                    /* Place card back into original position */
+                    cards.add(j,temp2);
+
+                    /* Because of the use of recursion, duplicates within the hand
+                    that don't use the first card of the hand are accounted for. Without
+                    changing this finish_index variable to the index of the last found duplicate,
+                    we would end up duplicates of each unique list. */
+                    finish_index = j;
+                }
+            }
+        }
+
+        /* If not duplicates were found, then the current list of cards is unique.
+        Create a copy of this so that we can keep editing the original without changing
+        the contents of the previously added list. */
+        if(allSets.size() == 0)
+            allSets.add((ArrayList<Card>)cards.clone());
+        
+        return allSets;
+    }
+
+    /* Method for calculating runs:
+        Find all unique lists of cards (based on rank) - allUniqueLists
+        Search each unique list of cards for runs
+        Total results
+    */
 }
