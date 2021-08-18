@@ -77,7 +77,7 @@ public class Player {
         Set<Card> set = new HashSet<Card>();
         int rank = card.getRank();
         Card cur;
-        int distance_down = 1, distance_up = 1, repeat_index = 0;
+        int distance_down = 1, distance_up = 1;
         set.add(card);
         
         
@@ -87,14 +87,12 @@ public class Player {
             if(cur.getRank() == rank-distance_down) {
                 set.add(cur);
                 distance_down++;
-                if(list.lastIndexOf(cur) != i && distance_down == 1) repeat_index=i+1; //There is a duplicate
                 if(i > 0) 
                     i=-1; //Accounts for skipped cards that could be in run.
             }
             else if(cur.getRank() == rank+distance_up) {
                 set.add(cur);
                 distance_up++;
-                if(list.lastIndexOf(cur) != i && distance_up == 1) repeat_index=i+1;
                 if(i > 0) i=-1; //Accounts for skipped cards that could be in run.
             }        
         }
@@ -105,8 +103,9 @@ public class Player {
             System.out.println("Run found: ");
         set.forEach(System.out::println);
 
+        /* Remove card from the front and add it to the end */
         list.remove(card);
-        if(repeat_index != 0) list.add(repeat_index, card);
+        list.add(card); 
 
         return set;
     }
@@ -114,16 +113,18 @@ public class Player {
     public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
         Set<Set<Card>> runs = new HashSet<Set<Card>>();
         Set<Card> temp;
-        Card cur;
+        Card cur, last_card = cards.get(cards.size()-1);
         ArrayList<Card> copy = (ArrayList<Card>) cards.clone();
 
         /* Pick a card. Search for consecutive cards around it and add them
         to a set. Once all of the consecutive cards have been found, do the
         same thing with the remaining cards in the list.
         If there is a duplicate of the card, run the same search twice. */
-        while(cards.size() > 0) {
+        while(cards.get(0) != last_card) {
             cur = cards.get(0);
             temp = findConsecutiveCards(cur, cards);
+
+            /* Sets cannot have duplicates, so it will skip duplicate entries */
             if(temp.size() > 2)
                 runs.add(temp);
         }
