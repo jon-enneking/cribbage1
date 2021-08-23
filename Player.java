@@ -145,6 +145,7 @@ public class Player {
     }
     
     public static Set<Set<Card>> getRuns(ArrayList<Card> cards) {
+        ArrayList<Card> original = (ArrayList<Card>)cards.clone();
         ArrayList<ArrayList<Card>> uniqueLists = allUniqueLists(cards);
         Set<Set<Card>> runs = new HashSet<Set<Card>>();
         Set<Card> temp;
@@ -160,36 +161,40 @@ public class Player {
         System.out.println("\nAll of the sets are: ");
         runs.forEach(run-> System.out.println(run));
         System.out.println("Total points from runs = " + total_points);
+        cards = original;
         return runs;
     }
 
     public static ArrayList<ArrayList<Card>> allUniqueLists(ArrayList<Card> cards) {
         ArrayList<ArrayList<Card>> allSets = new ArrayList<ArrayList<Card>>();
+        ArrayList<Card> duplicates = new ArrayList<Card>();
         Card temp1, temp2;
-        int finish_index = cards.size();
-        for(int i=0; i<finish_index; i++) {
+        for(int i=0; i<cards.size(); i++) {
             temp1 = cards.get(i);
             for(int j=i+1; j<cards.size(); j++) {
                 temp2 = cards.get(j);
                 if(temp1.getRank() == temp2.getRank()) { //Then there is a duplicate
-                    /* Remove first instance of duplicate and send remaining cards to look for duplicates */
-                    cards.remove(temp1);
-                    allSets.addAll(allUniqueLists(cards));
-
-                    /* Add first instance of duplicate back in, remove the second instance,
-                    and look for duplicates in the remaining cards */
-                    cards.add(i,temp1);
+                    duplicates.add(temp2);
                     cards.remove(temp2);
-                    allSets.addAll(allUniqueLists(cards));
+                    j--;
+                }
+            }
+        }
 
-                    /* Place card back into original position */
-                    cards.add(j,temp2);
-
-                    /* Because of the use of recursion, duplicates within the hand
-                    that don't use the first card of the hand are accounted for. Without
-                    changing this finish_index variable to the index of the last found duplicate,
-                    we would end up duplicates of each unique list. */
-                    finish_index = j;
+        if(cards.size() > 2) {
+            allSets.add((ArrayList<Card>)cards.clone());
+            int original_size = duplicates.size();
+            for(int i=0; i < duplicates.size() && i < 2*original_size; i++){
+                Card dup = duplicates.get(i);
+                for(int j=0; j < cards.size(); j++) {
+                    Card place_holder = cards.get(j);
+                    if(cards.get(j).getRank() == dup.getRank()) {
+                        cards.remove(place_holder);
+                        cards.add(dup);
+                        allSets.add((ArrayList<Card>)cards.clone());
+                        duplicates.add(place_holder);
+                        break;
+                    }
                 }
             }
         }
